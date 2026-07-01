@@ -1,0 +1,1926 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mening AI Maktabim — Ma'naviyat va Ma'rifat</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Exo+2:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root {
+    --neon-cyan: #00f5d4;
+    --neon-blue: #0dcaf0;
+    --neon-green: #39ff14;
+    --neon-teal: #00b4d8;
+    --deep-navy: #020818;
+    --dark-panel: #060e20;
+    --glass: rgba(0,245,212,0.05);
+    --glass-border: rgba(0,245,212,0.15);
+    --text-bright: #e0fbfc;
+    --text-muted: #7ec8cd;
+    --gold: #ffd700;
+    --silver: #c0c0c0;
+    --bronze: #cd7f32;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Exo 2', sans-serif;
+    background: var(--deep-navy);
+    color: var(--text-bright);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,245,212,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,212,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 20% 30%, rgba(0,180,216,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(0,245,212,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+    animation: bgPulse 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes bgPulse {
+    0% { opacity: 0.5; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.05); }
+  }
+
+  /* Sidebar */
+  #sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 260px;
+    background: linear-gradient(180deg, #040d1a 0%, #030a14 100%);
+    border-right: 1px solid var(--glass-border);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+    animation: scanLine 3s ease-in-out infinite;
+  }
+
+  @keyframes scanLine {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+
+  .logo-area {
+    padding: 28px 20px 24px;
+    border-bottom: 1px solid var(--glass-border);
+  }
+
+  .logo-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--neon-cyan);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    line-height: 1.4;
+    text-shadow: 0 0 20px rgba(0,245,212,0.5);
+  }
+
+  .logo-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    margin-top: 4px;
+    opacity: 0.7;
+  }
+
+  .logo-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-teal));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 12px;
+    box-shadow: 0 0 20px rgba(0,245,212,0.3);
+  }
+
+  .nav-section {
+    padding: 16px 12px 8px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    padding: 0 8px;
+    margin-bottom: 8px;
+    opacity: 0.6;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin-bottom: 3px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    position: relative;
+    border: 1px solid transparent;
+  }
+
+  .nav-item:hover {
+    background: var(--glass);
+    color: var(--text-bright);
+    border-color: var(--glass-border);
+  }
+
+  .nav-item.active {
+    background: linear-gradient(135deg, rgba(0,245,212,0.12), rgba(0,180,216,0.08));
+    color: var(--neon-cyan);
+    border-color: rgba(0,245,212,0.25);
+    box-shadow: inset 0 0 20px rgba(0,245,212,0.05);
+  }
+
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 20%; bottom: 20%;
+    width: 3px;
+    background: var(--neon-cyan);
+    border-radius: 0 3px 3px 0;
+    box-shadow: 0 0 8px var(--neon-cyan);
+  }
+
+  .nav-icon { font-size: 18px; width: 22px; text-align: center; }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--neon-cyan);
+    color: var(--deep-navy);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+
+  .sidebar-footer {
+    padding: 16px 12px;
+    border-top: 1px solid var(--glass-border);
+  }
+
+  .user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--glass);
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+  }
+
+  .user-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-teal));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .user-name { font-size: 13px; font-weight: 600; color: var(--text-bright); }
+  .user-role { font-size: 11px; color: var(--text-muted); }
+
+  /* Main content */
+  #main {
+    margin-left: 260px;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Pages */
+  .page { display: none; padding: 32px; animation: fadeIn 0.35s ease; }
+  .page.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Page header */
+  .page-header {
+    margin-bottom: 32px;
+  }
+
+  .page-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-bright);
+    letter-spacing: 1px;
+  }
+
+  .page-title span { color: var(--neon-cyan); }
+
+  .page-subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  /* Glass cards */
+  .glass-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .glass-card:hover {
+    border-color: rgba(0,245,212,0.3);
+    box-shadow: 0 0 30px rgba(0,245,212,0.05);
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+    opacity: 0.3;
+  }
+
+  .card-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--neon-cyan);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Stats row */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+
+  .stat-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 0 0 14px 14px;
+  }
+
+  .stat-card.cyan::after { background: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); }
+  .stat-card.blue::after { background: var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue); }
+  .stat-card.green::after { background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); }
+  .stat-card.gold::after { background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+
+  .stat-number {
+    font-family: 'Orbitron', monospace;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-card.cyan .stat-number { color: var(--neon-cyan); text-shadow: 0 0 20px rgba(0,245,212,0.5); }
+  .stat-card.blue .stat-number { color: var(--neon-blue); text-shadow: 0 0 20px rgba(13,202,240,0.5); }
+  .stat-card.green .stat-number { color: var(--neon-green); text-shadow: 0 0 20px rgba(57,255,20,0.4); }
+  .stat-card.gold .stat-number { color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,0.4); }
+
+  .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+  .stat-icon { font-size: 24px; float: right; opacity: 0.4; margin-top: -4px; }
+
+  /* Leaderboard table */
+  .lb-table { width: 100%; border-collapse: collapse; }
+  .lb-table thead tr th {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--glass-border);
+  }
+
+  .lb-table tbody tr {
+    transition: all 0.2s ease;
+    border-bottom: 1px solid rgba(0,245,212,0.05);
+  }
+
+  .lb-table tbody tr:hover { background: rgba(0,245,212,0.03); }
+
+  .lb-table tbody td {
+    padding: 12px 12px;
+    font-size: 14px;
+  }
+
+  .rank-badge {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .rank-1 { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #1a0a00; }
+  .rank-2 { background: linear-gradient(135deg, #c0c0c0, #888); color: #111; }
+  .rank-3 { background: linear-gradient(135deg, #cd7f32, #9a5b1a); color: #fff; }
+  .rank-other { background: rgba(0,245,212,0.1); color: var(--text-muted); }
+
+  .student-name { font-weight: 600; color: var(--text-bright); }
+  .student-class { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .xp-bar-wrap { width: 120px; }
+  .xp-bar-bg {
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .xp-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-blue));
+    box-shadow: 0 0 6px var(--neon-cyan);
+    transition: width 1s ease;
+  }
+
+  .xp-val { font-family: 'Orbitron', monospace; font-size: 12px; color: var(--neon-cyan); font-weight: 600; }
+
+  /* Live feed */
+  .live-dot {
+    width: 8px; height: 8px;
+    background: #ff4444;
+    border-radius: 50%;
+    display: inline-block;
+    animation: livePulse 1s ease-in-out infinite;
+    box-shadow: 0 0 8px #ff4444;
+  }
+
+  @keyframes livePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.3); }
+  }
+
+  .live-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    animation: slideIn 0.4s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .live-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    border: 2px solid var(--glass-border);
+  }
+
+  .live-text { font-size: 13px; color: var(--text-bright); line-height: 1.5; }
+  .live-text strong { color: var(--neon-cyan); }
+  .live-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ==== AI MENTOR PAGE ==== */
+  .mentor-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
+    height: calc(100vh - 120px);
+  }
+
+  .mentor-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .mentor-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mentor-card:hover, .mentor-card.selected {
+    border-color: var(--neon-cyan);
+    background: rgba(0,245,212,0.08);
+    box-shadow: 0 0 20px rgba(0,245,212,0.1);
+  }
+
+  .mentor-avatar-big {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+    border: 2px solid var(--glass-border);
+    position: relative;
+  }
+
+  .mentor-card.selected .mentor-avatar-big { border-color: var(--neon-cyan); box-shadow: 0 0 12px rgba(0,245,212,0.3); }
+
+  .mentor-info-name { font-weight: 700; font-size: 14px; color: var(--text-bright); }
+  .mentor-info-era { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .mentor-info-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    background: rgba(0,245,212,0.1);
+    border: 1px solid rgba(0,245,212,0.2);
+    border-radius: 20px;
+    color: var(--neon-cyan);
+    margin-top: 5px;
+    display: inline-block;
+  }
+
+  /* Chat window */
+  .chat-window {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .chat-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0,0,0,0.2);
+  }
+
+  .chat-status {
+    width: 10px; height: 10px;
+    background: var(--neon-green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--neon-green);
+    animation: livePulse 2s ease-in-out infinite;
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--glass-border) transparent;
+  }
+
+  .msg-bubble {
+    max-width: 70%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    position: relative;
+    animation: bubbleIn 0.3s ease;
+  }
+
+  @keyframes bubbleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .msg-bubble.mentor {
+    background: linear-gradient(135deg, rgba(0,245,212,0.1), rgba(0,180,216,0.08));
+    border: 1px solid rgba(0,245,212,0.2);
+    border-radius: 16px 16px 16px 4px;
+    align-self: flex-start;
+    color: var(--text-bright);
+  }
+
+  .msg-bubble.user {
+    background: linear-gradient(135deg, rgba(0,100,150,0.4), rgba(0,70,120,0.3));
+    border: 1px solid rgba(0,180,216,0.25);
+    border-radius: 16px 16px 4px 16px;
+    align-self: flex-end;
+    color: var(--text-bright);
+  }
+
+  .msg-meta { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+  .msg-meta.right { text-align: right; }
+
+  .msg-name { font-weight: 700; font-size: 12px; color: var(--neon-cyan); margin-bottom: 5px; }
+
+  .chat-input-area {
+    padding: 16px 20px;
+    border-top: 1px solid var(--glass-border);
+    display: flex;
+    gap: 10px;
+    background: rgba(0,0,0,0.2);
+  }
+
+  .chat-input {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text-bright);
+    font-family: 'Exo 2', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .chat-input:focus { border-color: var(--neon-cyan); }
+  .chat-input::placeholder { color: var(--text-muted); }
+
+  .send-btn {
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-teal));
+    border: none;
+    border-radius: 10px;
+    width: 46px; height: 46px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--deep-navy);
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .send-btn:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(0,245,212,0.4); }
+
+  .typing-indicator {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 10px 14px;
+    background: rgba(0,245,212,0.06);
+    border: 1px solid rgba(0,245,212,0.15);
+    border-radius: 16px 16px 16px 4px;
+    align-self: flex-start;
+    width: fit-content;
+  }
+
+  .typing-dot {
+    width: 7px; height: 7px;
+    background: var(--neon-cyan);
+    border-radius: 50%;
+    animation: typingBounce 1.2s ease-in-out infinite;
+  }
+
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-8px); }
+  }
+
+  /* ==== GAMIFICATION PAGE ==== */
+  .badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+
+  .badge-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    padding: 28px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.35s ease;
+    cursor: pointer;
+  }
+
+  .badge-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  }
+
+  .badge-card.earned { border-color: rgba(0,245,212,0.35); }
+  .badge-card.locked { filter: grayscale(0.7); opacity: 0.6; }
+
+  .badge-card.gold-badge:hover { border-color: var(--gold); box-shadow: 0 20px 40px rgba(255,215,0,0.15); }
+  .badge-card.cyan-badge:hover { border-color: var(--neon-cyan); box-shadow: 0 20px 40px rgba(0,245,212,0.15); }
+  .badge-card.green-badge:hover { border-color: var(--neon-green); box-shadow: 0 20px 40px rgba(57,255,20,0.15); }
+  .badge-card.blue-badge:hover { border-color: var(--neon-blue); box-shadow: 0 20px 40px rgba(13,202,240,0.15); }
+
+  .badge-glow {
+    position: absolute;
+    top: -30px; left: 50%;
+    transform: translateX(-50%);
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    filter: blur(30px);
+    opacity: 0.4;
+  }
+
+  .badge-icon-wrap {
+    width: 76px; height: 76px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    margin: 0 auto 16px;
+    position: relative;
+  }
+
+  .badge-card.earned .badge-icon-wrap {
+    animation: badgePulse 3s ease-in-out infinite;
+  }
+
+  @keyframes badgePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,245,212,0.2); }
+    50% { box-shadow: 0 0 0 12px rgba(0,245,212,0); }
+  }
+
+  .badge-name { font-family: 'Orbitron', monospace; font-size: 13px; font-weight: 700; color: var(--text-bright); margin-bottom: 6px; }
+  .badge-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
+
+  .badge-progress-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+  .badge-progress-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .badge-progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1s ease 0.3s;
+  }
+
+  .earned-tag {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: rgba(0,245,212,0.15);
+    border: 1px solid rgba(0,245,212,0.3);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--neon-cyan);
+    letter-spacing: 1px;
+  }
+
+  .locked-tag {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  /* XP level bar */
+  .level-card {
+    background: linear-gradient(135deg, rgba(0,245,212,0.08), rgba(0,100,150,0.08));
+    border: 1px solid rgba(0,245,212,0.2);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .level-circle {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-teal));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', monospace;
+    box-shadow: 0 0 30px rgba(0,245,212,0.3);
+    flex-shrink: 0;
+  }
+
+  .level-num { font-size: 26px; font-weight: 900; color: var(--deep-navy); line-height: 1; }
+  .level-lbl { font-size: 9px; font-weight: 700; color: var(--deep-navy); letter-spacing: 1px; }
+
+  .level-info { flex: 1; }
+  .level-name { font-family: 'Orbitron', monospace; font-size: 16px; font-weight: 700; color: var(--text-bright); margin-bottom: 4px; }
+  .level-xp { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
+
+  .level-bar-bg {
+    height: 10px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+  }
+
+  .level-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-blue), var(--neon-green));
+    box-shadow: 0 0 10px var(--neon-cyan);
+    transition: width 1.2s ease;
+  }
+
+  /* ==== PARENTS PAGE ==== */
+  .parent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  .progress-ring-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    padding: 20px 0;
+  }
+
+  .ring-item { text-align: center; }
+
+  .progress-ring {
+    transform: rotate(-90deg);
+  }
+
+  .ring-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 8; }
+  .ring-fill {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 251;
+    transition: stroke-dashoffset 1.2s ease 0.3s;
+  }
+
+  .ring-label { font-family: 'Orbitron', monospace; font-size: 20px; font-weight: 800; }
+  .ring-sublabel { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  .activity-timeline { display: flex; flex-direction: column; gap: 10px; }
+
+  .timeline-item {
+    display: flex;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    position: relative;
+  }
+
+  .timeline-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+    position: relative;
+  }
+
+  .timeline-dot::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    opacity: 0.2;
+  }
+
+  .timeline-dot.green { background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
+  .timeline-dot.green::before { background: var(--neon-green); }
+  .timeline-dot.cyan { background: var(--neon-cyan); box-shadow: 0 0 8px var(--neon-cyan); }
+  .timeline-dot.cyan::before { background: var(--neon-cyan); }
+  .timeline-dot.gold { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+  .timeline-dot.gold::before { background: var(--gold); }
+
+  .timeline-text { font-size: 13px; color: var(--text-bright); line-height: 1.5; }
+  .timeline-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .mood-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .mood-pill {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mood-pill.active-mood {
+    background: rgba(0,245,212,0.12);
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 3px; }
+
+  /* Responsive */
+  @media (max-width: 1200px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .parent-grid { grid-template-columns: 1fr; }
+    .mentor-layout { grid-template-columns: 220px 1fr; }
+  }
+
+  /* Canvas chart container */
+  .chart-container { position: relative; height: 220px; }
+
+  /* Notification dot */
+  .notif-count {
+    position: absolute;
+    top: -4px; right: -4px;
+    background: #ff4444;
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Pulse effect on stat cards */
+  @keyframes statCountUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animated-in { animation: statCountUp 0.5s ease forwards; }
+
+  /* Shimmer loading effect */
+  .shimmer {
+    background: linear-gradient(90deg,
+      rgba(255,255,255,0.03) 0%,
+      rgba(0,245,212,0.08) 50%,
+      rgba(255,255,255,0.03) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="logo-area">
+    <div class="logo-icon">🎓</div>
+    <div class="logo-title">AI MAKTABIM</div>
+    <div class="logo-sub">MA'NAVIYAT · MA'RIFAT</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">ASOSIY</div>
+    <div class="nav-item active" onclick="showPage('dashboard')">
+      <span class="nav-icon">📊</span>
+      <span>Dashboard</span>
+      <span class="nav-badge">LIVE</span>
+    </div>
+    <div class="nav-item" onclick="showPage('mentor')">
+      <span class="nav-icon">🤖</span>
+      <span>AI Mentor</span>
+    </div>
+
+    <div class="nav-label" style="margin-top:16px">O'QUVCHI</div>
+    <div class="nav-item" onclick="showPage('gamification')">
+      <span class="nav-icon">🏆</span>
+      <span>Yutuqlar</span>
+    </div>
+    <div class="nav-item" onclick="showPage('parents')">
+      <span class="nav-icon">👨‍👩‍👧</span>
+      <span>Ota-onalar</span>
+    </div>
+
+    <div class="nav-label" style="margin-top:16px">SOZLAMALAR</div>
+    <div class="nav-item">
+      <span class="nav-icon">⚙️</span>
+      <span>Sozlamalar</span>
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">🔔</span>
+      <span>Bildirishnomalar</span>
+      <span class="nav-badge">3</span>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">👤</div>
+      <div style="flex:1;">
+        <div class="user-name">Yuklanmoqda...</div>
+        <div class="user-role">...</div>
+      </div>
+      <div onclick="logout()" title="Chiqish" style="cursor:pointer; font-size:16px; color:var(--text-muted);">⏻</div>
+    </div>
+  </div>
+</nav>
+
+<!-- LOGIN / SIGNUP OVERLAY -->
+<div id="auth-overlay" style="display:none; position:fixed; inset:0; background:var(--deep-navy); z-index:9999; align-items:center; justify-content:center;">
+  <div style="width:360px; background:var(--dark-panel); border:1px solid var(--glass-border); border-radius:16px; padding:32px;">
+    <div style="text-align:center; margin-bottom:24px;">
+      <div style="font-family:'Orbitron',monospace; font-size:20px; font-weight:800; color:var(--neon-cyan);">AI MAKTABIM</div>
+      <div style="font-size:12px; color:var(--text-muted); letter-spacing:1px;">MA'NAVIYAT · MA'RIFAT</div>
+    </div>
+
+    <div id="auth-error" style="display:none; background:rgba(255,60,60,0.1); border:1px solid rgba(255,60,60,0.4); color:#ff6868; font-size:12px; padding:8px 12px; border-radius:8px; margin-bottom:14px;"></div>
+
+    <!-- LOGIN FORM -->
+    <div id="login-form">
+      <input id="login-username" type="text" placeholder="Username" style="width:100%; padding:11px 14px; margin-bottom:10px; background:var(--glass); border:1px solid var(--glass-border); border-radius:8px; color:var(--text-bright); font-family:'Exo 2';"/>
+      <input id="login-password" type="password" placeholder="Parol" style="width:100%; padding:11px 14px; margin-bottom:16px; background:var(--glass); border:1px solid var(--glass-border); border-radius:8px; color:var(--text-bright); font-family:'Exo 2';"/>
+      <button onclick="doLogin()" style="width:100%; padding:11px; background:var(--neon-cyan); color:#020818; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Exo 2';">Kirish</button>
+      <div style="text-align:center; margin-top:14px; font-size:12px; color:var(--text-muted);">
+        Akkountingiz yo'qmi? <span onclick="toggleAuthForm('signup')" style="color:var(--neon-cyan); cursor:pointer;">Ro'yxatdan o'tish</span>
+      </div>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div id="signup-form" style="display:none;">
+      <input id="signup-fullname" type="text" placeholder="To'liq ismingiz (masalan: Asilbek Yusupov)" style="width:100%; padding:11px 14px; margin-bottom:10px; background:var(--glass); border:1px solid var(--glass-border); border-radius:8px; color:var(--text-bright); font-family:'Exo 2';"/>
+      <input id="signup-username" type="text" placeholder="Username (noyob, masalan: asilbek2026)" style="width:100%; padding:11px 14px; margin-bottom:10px; background:var(--glass); border:1px solid var(--glass-border); border-radius:8px; color:var(--text-bright); font-family:'Exo 2';"/>
+      <input id="signup-school" type="text" placeholder="Maktab nomi (masalan: 1-maktab)" style="width:100%; padding:11px 14px; margin-bottom:10px; background:var(--glass); border:1px solid var(--glass-border); border-radius:8px; color:var(--text-bright); font-family:'Exo 2';"/>
+      <input id="signup-class" type="text" placeholder="Sinf (masalan: 10-A)" style="width:100%; padding:11px 14px; margin-bottom:10px; background:var(--glass); border:1px solid var(--glass-border); border-radius:8px; color:var(--text-bright); font-family:'Exo 2';"/>
+      <input id="signup-password" type="password" placeholder="Parol" style="width:100%; padding:11px 14px; margin-bottom:16px; background:var(--glass); border:1px solid var(--glass-border); border-radius:8px; color:var(--text-bright); font-family:'Exo 2';"/>
+      <button onclick="doSignup()" style="width:100%; padding:11px; background:var(--neon-green); color:#020818; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Exo 2';">Ro'yxatdan o'tish</button>
+      <div style="text-align:center; margin-top:14px; font-size:12px; color:var(--text-muted);">
+        Akkountingiz bormi? <span onclick="toggleAuthForm('login')" style="color:var(--neon-cyan); cursor:pointer;">Kirish</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<main id="main">
+
+  <!-- ====== DASHBOARD PAGE ====== -->
+  <div id="page-dashboard" class="page active">
+    <div class="page-header">
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <div>
+          <h1 class="page-title">Bosh <span>Dashboard</span></h1>
+          <p class="page-subtitle">Yetakchi reytinglar va jonli faoliyat monitoringi</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; background:rgba(255,68,68,0.1); border:1px solid rgba(255,68,68,0.2); border-radius:10px; padding:8px 14px;">
+          <span class="live-dot"></span>
+          <span style="font-size:12px; font-weight:600; color:#ff8888;">JONLI EFIR</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card cyan">
+        <div class="stat-icon">📚</div>
+        <div class="stat-number">1,284</div>
+        <div class="stat-label">Faol o'quvchilar</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-number">8,947</div>
+        <div class="stat-label">Bugungi XP ball</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon">✅</div>
+        <div class="stat-number">342</div>
+        <div class="stat-label">Bajarilgan topshiriqlar</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-icon">🏅</div>
+        <div class="stat-number">67</div>
+        <div class="stat-label">Yangi yutuqlar</div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px;">
+
+      <!-- Weekly leaderboard -->
+      <div class="glass-card" style="grid-column: span 2;">
+        <div class="card-title">
+          <span>🥇</span> HAFTALIK REYTING — O'QUVCHILAR
+        </div>
+        <table class="lb-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>O'quvchi</th>
+              <th>Sinf</th>
+              <th>XP Ball</th>
+              <th>Streak</th>
+              <th>Ko'rsatkich</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-body">
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Class Ratings -->
+      <div class="glass-card">
+        <div class="card-title">🏫 SINFLAR REYTINGI</div>
+        <div id="class-ratings"></div>
+      </div>
+
+    </div>
+
+    <!-- Bottom row -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px;">
+
+      <!-- Chart -->
+      <div class="glass-card">
+        <div class="card-title">📈 HAFTALIK FAOLLIK GRAFIGI</div>
+        <div class="chart-container">
+          <canvas id="activityChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Live feed -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span class="live-dot"></span>
+          OXIRGI BAJARILGAN TOPSHIRIQLAR
+        </div>
+        <div id="live-feed" style="max-height:220px; overflow-y:auto;"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====== AI MENTOR PAGE ====== -->
+  <div id="page-mentor" class="page">
+    <div class="page-header">
+      <h1 class="page-title">AI <span>Mentor</span></h1>
+      <p class="page-subtitle">Buyuk allomalar bilan suhbatlashing — bilim va ilhom oling</p>
+    </div>
+
+    <div class="mentor-layout">
+      <!-- Mentor list -->
+      <div>
+        <div style="font-size:11px; font-weight:600; letter-spacing:2px; color:var(--text-muted); margin-bottom:12px;">MENTORNI TANLANG</div>
+        <div class="mentor-list">
+          <div class="mentor-card selected" id="mentor-0" onclick="selectMentor(0)">
+            <div class="mentor-avatar-big" style="background:linear-gradient(135deg,#1a3a2a,#0d2a1a);border-color:var(--neon-green);">🦋</div>
+            <div>
+              <div class="mentor-info-name">Alisher Navoiy</div>
+              <div class="mentor-info-era">1441 – 1501</div>
+              <div class="mentor-info-tag">Shoir · Mutafakkir</div>
+            </div>
+          </div>
+          <div class="mentor-card" id="mentor-1" onclick="selectMentor(1)">
+            <div class="mentor-avatar-big" style="background:linear-gradient(135deg,#3a1a0a,#2a0d00);border-color:#ff7a00;">⚔️</div>
+            <div>
+              <div class="mentor-info-name">Amir Temur</div>
+              <div class="mentor-info-era">1336 – 1405</div>
+              <div class="mentor-info-tag">Hukmdor · Strategist</div>
+            </div>
+          </div>
+          <div class="mentor-card" id="mentor-2" onclick="selectMentor(2)">
+            <div class="mentor-avatar-big" style="background:linear-gradient(135deg,#0a1a3a,#00122a);border-color:var(--neon-blue);">🔭</div>
+            <div>
+              <div class="mentor-info-name">Mirzo Ulug'bek</div>
+              <div class="mentor-info-era">1394 – 1449</div>
+              <div class="mentor-info-tag">Olim · Astronom</div>
+            </div>
+          </div>
+          <div class="mentor-card" id="mentor-3" onclick="selectMentor(3)">
+            <div class="mentor-avatar-big" style="background:linear-gradient(135deg,#2a1a0a,#1a0d00);border-color:var(--gold);">📜</div>
+            <div>
+              <div class="mentor-info-name">Al-Xorazmiy</div>
+              <div class="mentor-info-era">780 – 850</div>
+              <div class="mentor-info-tag">Matematikchi · Olim</div>
+            </div>
+          </div>
+          <div class="mentor-card" id="mentor-4" onclick="selectMentor(4)">
+            <div class="mentor-avatar-big" style="background:linear-gradient(135deg,#1a0a2a,#0d0020);border-color:#b44fff;">🩺</div>
+            <div>
+              <div class="mentor-info-name">Ibn Sino</div>
+              <div class="mentor-info-era">980 – 1037</div>
+              <div class="mentor-info-tag">Tabib · Faylasuf</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat window -->
+      <div class="chat-window">
+        <div class="chat-header">
+          <div class="mentor-avatar-big" id="chat-avatar" style="width:42px;height:42px;font-size:18px;background:linear-gradient(135deg,#1a3a2a,#0d2a1a);border-color:var(--neon-green);">🦋</div>
+          <div>
+            <div style="font-weight:700; font-size:15px;" id="chat-name">Alisher Navoiy</div>
+            <div style="font-size:12px; color:var(--text-muted);" id="chat-era">Shoir va mutafakkir · 1441–1501</div>
+          </div>
+          <div class="chat-status" style="margin-left:auto;"></div>
+          <div style="font-size:12px; color:var(--neon-green); margin-left:6px;">Onlayn</div>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+          <div class="msg-bubble mentor">
+            <div class="msg-name">🦋 Alisher Navoiy</div>
+            Assalomu alaykum, aziz shogird! Men Alisher Navoiymen. Ilm yo'lida qadamlar qo'yayotganingizdan xursandman. Savollaringiz bormi?
+            <div class="msg-meta">Hozir</div>
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <input class="chat-input" id="chat-input" type="text" placeholder="Savolingizni yozing..." onkeydown="if(event.key==='Enter') sendMessage()"/>
+          <button class="send-btn" onclick="sendMessage()">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== GAMIFICATION PAGE ====== -->
+  <div id="page-gamification" class="page">
+    <div class="page-header">
+      <h1 class="page-title">Mening <span>Yutuqlarim</span></h1>
+      <p class="page-subtitle">Erishgan medallar, baddjlar va darajalaringiz</p>
+    </div>
+
+    <!-- Level card -->
+    <div class="level-card">
+      <div class="level-circle">
+        <div class="level-num" id="gam-level-num">12</div>
+        <div class="level-lbl">DARAJA</div>
+      </div>
+      <div class="level-info">
+        <div class="level-name">⚡ Ilm Yulduzi</div>
+        <div class="level-xp" id="gam-level-xp">3,420 / 4,000 XP · Keyingi daraja: "Bilim Ustasi"</div>
+        <div class="level-bar-bg">
+          <div class="level-bar-fill" id="gam-level-bar" style="width: 85.5%"></div>
+        </div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:6px;" id="gam-xp-to-next">Keyingi darajaga 580 XP qoldi</div>
+      </div>
+      <div style="text-align:right; flex-shrink:0;">
+        <div style="font-family:'Orbitron',monospace; font-size:28px; font-weight:900; color:var(--gold); text-shadow: 0 0 20px rgba(255,215,0,0.4);" id="gam-rank">🥇 #3</div>
+        <div style="font-size:12px; color:var(--text-muted);">Sinf reytingida</div>
+      </div>
+    </div>
+
+    <!-- Badges -->
+    <div class="card-title" style="margin-bottom:16px;"><span>🎖️</span> BADDJLAR VA MEDALLAR</div>
+    <div class="badges-grid" id="badges-grid"></div>
+  </div>
+
+  <!-- ====== PARENTS PAGE ====== -->
+  <div id="page-parents" class="page">
+    <div class="page-header">
+      <h1 class="page-title">Ota-onalar <span>Xonasi</span></h1>
+      <p class="page-subtitle">Farzandingizning ruhan o'sishi va o'quv faoliyatini kuzating</p>
+    </div>
+
+    <!-- Child info -->
+    <div style="background:linear-gradient(135deg,rgba(0,245,212,0.06),rgba(0,100,150,0.06)); border:1px solid rgba(0,245,212,0.2); border-radius:16px; padding:20px 24px; margin-bottom:24px; display:flex; align-items:center; gap:20px;">
+      <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--neon-cyan),var(--neon-teal));display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 0 20px rgba(0,245,212,0.3);">👦</div>
+      <div style="flex:1">
+        <div style="font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--text-bright);" id="parent-child-name">Asilbek Yusupov</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-top:3px;" id="parent-child-meta">10-A sinf · O'quvchi · 12-daraja</div>
+      </div>
+      <div style="display:flex;gap:12px;">
+        <div style="text-align:center;padding:14px 18px;background:rgba(0,245,212,0.08);border-radius:12px;border:1px solid rgba(0,245,212,0.15);">
+          <div style="font-family:'Orbitron',monospace;font-size:22px;font-weight:800;color:var(--neon-cyan);" id="parent-attendance-top">94%</div>
+          <div style="font-size:11px;color:var(--text-muted);">Davomat</div>
+        </div>
+        <div style="text-align:center;padding:14px 18px;background:rgba(57,255,20,0.06);border-radius:12px;border:1px solid rgba(57,255,20,0.15);">
+          <div style="font-family:'Orbitron',monospace;font-size:22px;font-weight:800;color:var(--neon-green);" id="parent-avg-top">4.7</div>
+          <div style="font-size:11px;color:var(--text-muted);">O'rtacha ball</div>
+        </div>
+        <div style="text-align:center;padding:14px 18px;background:rgba(255,215,0,0.06);border-radius:12px;border:1px solid rgba(255,215,0,0.15);">
+          <div style="font-family:'Orbitron',monospace;font-size:22px;font-weight:800;color:var(--gold);" id="parent-streak-top">21</div>
+          <div style="font-size:11px;color:var(--text-muted);">Kun ketma-ket</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="parent-grid">
+
+      <!-- Progress circles -->
+      <div class="glass-card">
+        <div class="card-title">📊 O'QUV KO'RSATKICHLARI</div>
+        <div class="progress-ring-wrap">
+          <div class="ring-item">
+            <svg width="90" height="90" class="progress-ring">
+              <circle class="ring-bg" cx="45" cy="45" r="40"/>
+              <circle class="ring-fill" id="parent-ring-attendance" cx="45" cy="45" r="40" stroke="var(--neon-cyan)"
+                style="stroke-dashoffset: calc(251 - 251*0.94)"/>
+            </svg>
+            <div class="ring-label" style="color:var(--neon-cyan);" id="parent-ring-attendance-label">94%</div>
+            <div class="ring-sublabel">Davomat</div>
+          </div>
+          <div class="ring-item">
+            <svg width="90" height="90" class="progress-ring">
+              <circle class="ring-bg" cx="45" cy="45" r="40"/>
+              <circle class="ring-fill" cx="45" cy="45" r="40" stroke="var(--neon-green)"
+                style="stroke-dashoffset: calc(251 - 251*0.88)"/>
+            </svg>
+            <div class="ring-label" style="color:var(--neon-green);">88%</div>
+            <div class="ring-sublabel">Vazifalar</div>
+          </div>
+          <div class="ring-item">
+            <svg width="90" height="90" class="progress-ring">
+              <circle class="ring-bg" cx="45" cy="45" r="40"/>
+              <circle class="ring-fill" cx="45" cy="45" r="40" stroke="var(--gold)"
+                style="stroke-dashoffset: calc(251 - 251*0.76)"/>
+            </svg>
+            <div class="ring-label" style="color:var(--gold);">76%</div>
+            <div class="ring-sublabel">Testlar</div>
+          </div>
+        </div>
+
+        <!-- Subject performance -->
+        <div style="margin-top:16px;">
+          <div class="card-title" style="margin-bottom:12px;">📖 FANLAR BO'YICHA</div>
+          <div id="subject-bars"></div>
+        </div>
+      </div>
+
+      <!-- Mood / wellbeing -->
+      <div class="glass-card">
+        <div class="card-title">🧠 RUHIY HOLAT MONITORINGI</div>
+        <div class="chart-container">
+          <canvas id="moodChart"></canvas>
+        </div>
+        <div style="margin-top:16px;">
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">BUGUNGI KAYFIYAT</div>
+          <div class="mood-row">
+            <div class="mood-pill active-mood">😊 Xursand</div>
+            <div class="mood-pill">🎯 Maqsadli</div>
+            <div class="mood-pill">💪 Faol</div>
+            <div class="mood-pill">📚 Sinchkov</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity timeline -->
+      <div class="glass-card">
+        <div class="card-title">⏱️ SO'NGGI FAOLIYAT</div>
+        <div class="activity-timeline" id="activity-timeline"></div>
+      </div>
+
+      <!-- Weekly chart -->
+      <div class="glass-card">
+        <div class="card-title">📅 HAFTALIK O'QUV GRAFIGI</div>
+        <div class="chart-container">
+          <canvas id="weeklyChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ============== NAVIGATION ==============
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+
+  const items = document.querySelectorAll('.nav-item');
+  items.forEach(item => {
+    if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(page)) {
+      item.classList.add('active');
+    }
+  });
+
+  // Init charts when page shown
+  if (page === 'dashboard') initDashboardCharts();
+  if (page === 'parents') initParentCharts();
+  if (page === 'gamification') renderBadges();
+}
+
+// ============== DASHBOARD DATA ==============
+const students = [
+  { name: "Malika Rahimova", cls: "10-A", xp: 4250, streak: 21, avatar: "👩‍🎓" },
+  { name: "Jasur Toshmatov", cls: "9-B", xp: 3980, streak: 18, avatar: "👨‍🎓" },
+  { name: "Asilbek Yusupov", cls: "10-A", xp: 3420, streak: 21, avatar: "👤" },
+  { name: "Nilufar Karimova", cls: "11-A", xp: 3100, streak: 12, avatar: "👩‍💻" },
+  { name: "Sherzod Mirzayev", cls: "9-A", xp: 2980, streak: 9, avatar: "👨‍💻" },
+  { name: "Zulfiya Hasanova", cls: "10-B", xp: 2750, streak: 15, avatar: "👩‍🏫" },
+  { name: "Abdulloh Nazarov", cls: "11-B", xp: 2540, streak: 7, avatar: "🧑‍🎓" },
+];
+
+const classRatings = [
+  { name: "10-A", score: 4840, color: "var(--neon-cyan)", pct: 97 },
+  { name: "9-B",  score: 4620, color: "var(--neon-blue)", pct: 92 },
+  { name: "11-A", score: 4380, color: "var(--neon-green)", pct: 87 },
+  { name: "9-A",  score: 4150, color: "var(--gold)", pct: 83 },
+  { name: "10-B", score: 3900, color: "#b44fff", pct: 78 },
+  { name: "11-B", score: 3650, color: "#ff7a00", pct: 73 },
+];
+
+function renderLeaderboard() {
+  const tbody = document.getElementById('leaderboard-body');
+  tbody.innerHTML = students.map((s, i) => {
+    const pct = Math.round(s.xp / 4500 * 100);
+    const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-other';
+    const rankBg = i < 3 ? ['rank-1','rank-2','rank-3'][i] : 'rank-other';
+    const isMe = s.name === "Asilbek Yusupov";
+    return `
+      <tr style="${isMe ? 'background:rgba(0,245,212,0.04);' : ''}">
+        <td><span class="rank-badge ${rankBg}">${i+1}</span></td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:20px;">${s.avatar}</span>
+            <div>
+              <div class="student-name">${s.name}${isMe ? ' <span style="font-size:10px;color:var(--neon-cyan);margin-left:4px;">(Sen)</span>' : ''}</div>
+            </div>
+          </div>
+        </td>
+        <td><span style="background:rgba(0,245,212,0.08);border:1px solid rgba(0,245,212,0.15);border-radius:6px;padding:3px 8px;font-size:12px;">${s.cls}</span></td>
+        <td>
+          <div class="xp-val">${s.xp.toLocaleString()} XP</div>
+          <div class="xp-bar-wrap">
+            <div class="xp-bar-bg"><div class="xp-bar-fill" style="width:${pct}%"></div></div>
+          </div>
+        </td>
+        <td><span style="color:var(--gold);font-weight:700;">🔥 ${s.streak}</span></td>
+        <td><span style="color:var(--neon-green);font-size:12px;">▲ +${Math.floor(Math.random()*15+3)} bugun</span></td>
+      </tr>`;
+  }).join('');
+}
+
+function renderClassRatings() {
+  const el = document.getElementById('class-ratings');
+  el.innerHTML = classRatings.map(c => `
+    <div style="margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+        <span style="font-weight:700;font-size:14px;">${c.name}</span>
+        <span style="font-family:'Orbitron',monospace;font-size:12px;color:${c.color};">${c.score}</span>
+      </div>
+      <div class="xp-bar-bg" style="height:8px;">
+        <div class="xp-bar-fill" style="width:${c.pct}%;background:${c.color};box-shadow:0 0 8px ${c.color};"></div>
+      </div>
+    </div>`).join('');
+}
+
+const liveEvents = [
+  { avatar: "👩‍🎓", name: "Malika R.", action: "Matematik test yakunladi", score: "+120 XP", time: "Hozir", bg: "#1a3a2a" },
+  { avatar: "👨‍🎓", name: "Jasur T.", action: "AI Mentor bilan suhbatlashdi", score: "+45 XP", time: "2 daq", bg: "#1a2a3a" },
+  { avatar: "🧑‍🎓", name: "Abdulloh N.", action: "\"Kitobxon\" baddji oldi!", score: "+200 XP", time: "5 daq", bg: "#2a1a0a" },
+  { avatar: "👩‍💻", name: "Nilufar K.", action: "Fizika vazifasini topshirdi", score: "+80 XP", time: "8 daq", bg: "#1a0a2a" },
+  { avatar: "👨‍💻", name: "Sherzod M.", action: "Streak: 9 kun!", score: "+50 XP", time: "12 daq", bg: "#2a2a0a" },
+];
+
+function renderLiveFeed() {
+  const el = document.getElementById('live-feed');
+  el.innerHTML = liveEvents.map(e => `
+    <div class="live-item">
+      <div class="live-avatar" style="background:${e.bg};">${e.avatar}</div>
+      <div style="flex:1;">
+        <div class="live-text"><strong>${e.name}</strong> — ${e.action} <span style="color:var(--neon-green);font-weight:600;">${e.score}</span></div>
+        <div class="live-time">${e.time} oldin</div>
+      </div>
+    </div>`).join('');
+}
+
+function initDashboardCharts() {
+  renderLiveFeed();
+
+  const ctx = document.getElementById('activityChart');
+  if (!ctx || ctx._chartInstance) return;
+  ctx._chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh', 'Ya'],
+      datasets: [{
+        label: 'Umumiy XP',
+        data: [3200, 4100, 3800, 5200, 4800, 6100, 8947],
+        borderColor: '#00f5d4',
+        backgroundColor: 'rgba(0,245,212,0.07)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#00f5d4',
+        pointRadius: 4,
+        pointShadowBlur: 10,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#7ec8cd', font: { family: 'Exo 2' } } },
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#7ec8cd', font: { family: 'Exo 2' } } }
+      }
+    }
+  });
+}
+
+// ============== AI MENTOR (ma'lumotlar HTML bilan moslashtirish uchun) ==============
+const mentorMeta = [
+  { name: "Alisher Navoiy", era: "Shoir va mutafakkir · 1441–1501", avatar: "🦋", bg: "linear-gradient(135deg,#1a3a2a,#0d2a1a)", border: "var(--neon-green)" },
+  { name: "Amir Temur", era: "Hukmdor va strategist · 1336–1405", avatar: "⚔️", bg: "linear-gradient(135deg,#3a1a0a,#2a0d00)", border: "#ff7a00" },
+  { name: "Mirzo Ulug'bek", era: "Olim va astronom · 1394–1449", avatar: "🔭", bg: "linear-gradient(135deg,#0a1a3a,#00122a)", border: "var(--neon-blue)" },
+  { name: "Al-Xorazmiy", era: "Matematikchi va olim · 780–850", avatar: "📜", bg: "linear-gradient(135deg,#2a1a0a,#1a0d00)", border: "var(--gold)" },
+  { name: "Ibn Sino", era: "Tabib va faylasuf · 980–1037", avatar: "🩺", bg: "linear-gradient(135deg,#1a0a2a,#0d0020)", border: "#b44fff" }
+];
+
+// ============== GAMIFICATION ==============
+const badges = [
+  { icon:"📖", name:"Kitobxon", desc:"30 ta maqola o'qildi", color:"var(--neon-cyan)", type:"cyan-badge", bg:"rgba(0,245,212,0.1)", earned:true, pct:100 },
+  { icon:"⭐", name:"Ilm Nishoni", desc:"Haftalik top-3 da bo'ldi", color:"var(--gold)", type:"gold-badge", bg:"rgba(255,215,0,0.1)", earned:true, pct:100 },
+  { icon:"⚡", name:"Faol", desc:"7 kun ketma-ket faol", color:"var(--neon-green)", type:"green-badge", bg:"rgba(57,255,20,0.1)", earned:true, pct:100 },
+  { icon:"🎯", name:"Aniq Nishon", desc:"10 ta test 90%+ ball", color:"var(--neon-blue)", type:"blue-badge", bg:"rgba(13,202,240,0.1)", earned:true, pct:100 },
+  { icon:"🤝", name:"Hamkor", desc:"5 ta guruh topshirig'i", color:"#b44fff", type:"cyan-badge", bg:"rgba(180,79,255,0.1)", earned:true, pct:100 },
+  { icon:"🔥", name:"Streak Master", desc:"21 kun ketma-ket o'qish", color:"#ff7a00", type:"gold-badge", bg:"rgba(255,122,0,0.1)", earned:true, pct:100 },
+  { icon:"🏆", name:"Chempion", desc:"Oylik reyting birinchi", color:"var(--gold)", type:"gold-badge", bg:"rgba(255,215,0,0.08)", earned:false, pct:67 },
+  { icon:"🧠", name:"Aql Sohibi", desc:"100 ta savolga javob", color:"var(--neon-cyan)", type:"cyan-badge", bg:"rgba(0,245,212,0.05)", earned:false, pct:82 },
+  { icon:"🌟", name:"Ustoz Shogird", desc:"AI Mentor 20 suhbat", color:"var(--neon-green)", type:"green-badge", bg:"rgba(57,255,20,0.06)", earned:false, pct:45 },
+  { icon:"💎", name:"Elita", desc:"1000 ta vazifa bajardi", color:"#00f5d4", type:"cyan-badge", bg:"rgba(0,245,212,0.04)", earned:false, pct:34 },
+];
+
+function renderBadges() {
+  const grid = document.getElementById('badges-grid');
+  if (grid.innerHTML) return;
+  grid.innerHTML = badges.map(b => `
+    <div class="badge-card ${b.type} ${b.earned ? 'earned' : 'locked'}">
+      <div class="badge-glow" style="background:${b.color};"></div>
+      ${b.earned ? '<div class="earned-tag">✓ OLINDI</div>' : '<div class="locked-tag">🔒 YOPIQ</div>'}
+      <div class="badge-icon-wrap" style="background:${b.bg};border:2px solid ${b.color}20;">
+        <span style="filter:${b.earned ? 'none' : 'grayscale(0.5)'};">${b.icon}</span>
+      </div>
+      <div class="badge-name" style="color:${b.earned ? b.color : 'var(--text-muted)'};">${b.name}</div>
+      <div class="badge-desc">${b.desc}</div>
+      <div class="badge-progress-label">${b.pct}% bajarildi</div>
+      <div class="badge-progress-bar">
+        <div class="badge-progress-fill" style="width:${b.pct}%;background:${b.color};box-shadow:0 0 6px ${b.color};"></div>
+      </div>
+    </div>`).join('');
+}
+
+// ============== PARENTS ==============
+const subjects = [
+  { name: "Matematika", score: 92, color: "var(--neon-cyan)" },
+  { name: "Fizika", score: 88, color: "var(--neon-blue)" },
+  { name: "Ona tili", score: 95, color: "var(--neon-green)" },
+  { name: "Ingliz tili", score: 84, color: "var(--gold)" },
+  { name: "Tarix", score: 78, color: "#b44fff" },
+  { name: "Kimyo", score: 71, color: "#ff7a00" },
+];
+
+const timeline = [
+  { dot: "green", text: "<strong>Matematika testi</strong> — 92/100 ball oldi", time: "Bugun, 09:15" },
+  { dot: "cyan", text: "<strong>AI Mentor</strong> bilan Ibn Sino haqida suhbatlashdi", time: "Bugun, 10:42" },
+  { dot: "gold", text: "<strong>\"Kitobxon\" baddji</strong> oldi — 30 maqola o'qildi!", time: "Kecha, 18:30" },
+  { dot: "green", text: "<strong>Fizika uyga vazifasi</strong> vaqtida topshirildi", time: "Kecha, 16:10" },
+  { dot: "cyan", text: "<strong>Ona tili insho</strong> — \"5\" baho oldi", time: "2 kun oldin" },
+];
+
+function initParentCharts() {
+  // Subject bars
+  const sb = document.getElementById('subject-bars');
+  if (!sb.innerHTML) {
+    sb.innerHTML = subjects.map(s => `
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+          <span style="color:var(--text-bright);">${s.name}</span>
+          <span style="color:${s.color};font-weight:700;">${s.score}%</span>
+        </div>
+        <div class="xp-bar-bg" style="height:6px;">
+          <div class="xp-bar-fill" style="width:${s.score}%;background:${s.color};box-shadow:0 0 6px ${s.color};"></div>
+        </div>
+      </div>`).join('');
+  }
+
+  // Timeline
+  const tl = document.getElementById('activity-timeline');
+  if (!tl.innerHTML) {
+    tl.innerHTML = timeline.map(t => `
+      <div class="timeline-item">
+        <div class="timeline-dot ${t.dot}"></div>
+        <div>
+          <div class="timeline-text">${t.text}</div>
+          <div class="timeline-time">${t.time}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  // Mood chart
+  const moodCtx = document.getElementById('moodChart');
+  if (moodCtx && !moodCtx._chartInstance) {
+    moodCtx._chartInstance = new Chart(moodCtx, {
+      type: 'radar',
+      data: {
+        labels: ['Xursandlik', 'Faollik', 'E\'tibor', 'Motivatsiya', 'Ijtimoiylik', 'Sabr'],
+        datasets: [{
+          label: 'Ruhiy holat',
+          data: [88, 82, 75, 90, 70, 85],
+          borderColor: 'var(--neon-cyan)',
+          backgroundColor: 'rgba(0,245,212,0.08)',
+          borderWidth: 2,
+          pointBackgroundColor: 'var(--neon-cyan)',
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          r: {
+            grid: { color: 'rgba(255,255,255,0.05)' },
+            ticks: { display: false },
+            pointLabels: { color: 'var(--text-muted)', font: { family: 'Exo 2', size: 11 } }
+          }
+        }
+      }
+    });
+  }
+
+  // Weekly chart
+  const wCtx = document.getElementById('weeklyChart');
+  if (wCtx && !wCtx._chartInstance) {
+    wCtx._chartInstance = new Chart(wCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh', 'Ya'],
+        datasets: [
+          { label: "O'quv vaqti (daq)", data: [45, 80, 60, 120, 90, 55, 70], backgroundColor: 'rgba(0,245,212,0.3)', borderColor: 'var(--neon-cyan)', borderWidth: 1, borderRadius: 6 },
+          { label: 'XP ball', data: [180, 320, 240, 480, 360, 220, 280], backgroundColor: 'rgba(57,255,20,0.2)', borderColor: 'var(--neon-green)', borderWidth: 1, borderRadius: 6, yAxisID: 'y1' }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: 'var(--text-muted)', font: { family: 'Exo 2', size: 11 } } } },
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#7ec8cd' } },
+          y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#7ec8cd' } },
+          y1: { position: 'right', grid: { display: false }, ticks: { color: 'var(--neon-green)' } }
+        }
+      }
+    });
+  }
+}
+
+// Dashboard charts init va live-feed endi startApp() ichida, login bo'lgandan keyin ishga tushadi
+</script>
+<script>
+  // Login qilgan o'quvchining ma'lumotlari (localStorage'dan olinadi)
+  let currentStudentId = null;
+  let authToken = null;
+  let currentMentorId = 0;
+
+  function showAuthError(msg) {
+      const el = document.getElementById('auth-error');
+      el.textContent = msg;
+      el.style.display = 'block';
+  }
+
+  function toggleAuthForm(which) {
+      document.getElementById('auth-error').style.display = 'none';
+      document.getElementById('login-form').style.display = which === 'login' ? 'block' : 'none';
+      document.getElementById('signup-form').style.display = which === 'signup' ? 'block' : 'none';
+  }
+
+  async function doLogin() {
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      if (!username || !password) { showAuthError("Username va parolni kiriting"); return; }
+
+      try {
+          const res = await fetch('http://127.0.0.1:8000/api/login', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({ username, password })
+          });
+          const data = await res.json();
+          if (!res.ok) { showAuthError(data.detail || "Xatolik yuz berdi"); return; }
+
+          localStorage.setItem('ai_maktab_token', data.token);
+          localStorage.setItem('ai_maktab_student_id', data.student_id);
+          startApp(data.token, data.student_id);
+      } catch (e) {
+          showAuthError("Serverga ulanib bo'lmadi. main.py ishlab turganini tekshiring.");
+      }
+  }
+
+  async function doSignup() {
+      const full_name = document.getElementById('signup-fullname').value.trim();
+      const username = document.getElementById('signup-username').value.trim();
+      const school_name = document.getElementById('signup-school').value.trim() || "Nomsiz maktab";
+      const student_class = document.getElementById('signup-class').value.trim() || "10-A";
+      const password = document.getElementById('signup-password').value;
+
+      if (!full_name || !username || !password) { showAuthError("Ism, username va parolni to'ldiring"); return; }
+
+      try {
+          const res = await fetch('http://127.0.0.1:8000/api/signup', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({ username, full_name, password, student_class, school_name })
+          });
+          const data = await res.json();
+          if (!res.ok) { showAuthError(data.detail || "Xatolik yuz berdi"); return; }
+
+          localStorage.setItem('ai_maktab_token', data.token);
+          localStorage.setItem('ai_maktab_student_id', data.student_id);
+          startApp(data.token, data.student_id);
+      } catch (e) {
+          showAuthError("Serverga ulanib bo'lmadi. main.py ishlab turganini tekshiring.");
+      }
+  }
+
+  function logout() {
+      localStorage.removeItem('ai_maktab_token');
+      localStorage.removeItem('ai_maktab_student_id');
+      location.reload();
+  }
+
+  function startApp(token, studentId) {
+      authToken = token;
+      currentStudentId = parseInt(studentId);
+      document.getElementById('auth-overlay').style.display = 'none';
+      loadDashboardData();
+      initDashboardCharts();
+
+      setInterval(() => {
+          const newEvent = liveEvents[Math.floor(Math.random()*liveEvents.length)];
+          const feedEl = document.getElementById('live-feed');
+          if (!feedEl) return;
+          const div = document.createElement('div');
+          div.className = 'live-item';
+          div.innerHTML = `
+            <div class="live-avatar" style="background:${newEvent.bg};">${newEvent.avatar}</div>
+            <div style="flex:1;">
+              <div class="live-text"><strong>${newEvent.name}</strong> — ${newEvent.action} <span style="color:var(--neon-green);font-weight:600;">${newEvent.score}</span></div>
+              <div class="live-time">Hozir</div>
+            </div>`;
+          feedEl.insertBefore(div, feedEl.firstChild);
+          if (feedEl.children.length > 8) feedEl.removeChild(feedEl.lastChild);
+      }, 4000);
+  }
+
+  // Sahifalar o'tish funksiyasi
+  function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      
+      document.getElementById('page-' + pageId).classList.add('active');
+      if(event) event.currentTarget.classList.add('active');
+      
+      if(pageId === 'dashboard') loadDashboardData();
+  }
+
+  // 100% DINAMIK DASHBOARD YUKLASH (Python'dan ma'lumot olish)
+  async function loadDashboardData() {
+      try {
+          const response = await fetch(`http://127.0.0.1:8000/api/dashboard/${currentStudentId}`);
+          const data = await response.json();
+          
+          document.querySelector('.user-name').innerText = data.personal.name;
+          document.querySelector('.user-role').innerText = `${data.personal.class} sinf · O'quvchi`;
+
+          // ===== YUTUQLAR (gamification) sahifasi =====
+          const p = data.personal;
+          document.getElementById('gam-level-num').innerText = p.level;
+          document.getElementById('gam-level-xp').innerText = `${p.xp_into_level} / 250 XP · Jami: ${p.xp.toLocaleString()} XP`;
+          document.getElementById('gam-level-bar').style.width = `${(p.xp_into_level/250)*100}%`;
+          document.getElementById('gam-xp-to-next').innerText = `Keyingi darajaga ${p.xp_to_next} XP qoldi`;
+          document.getElementById('gam-rank').innerText = p.rank_in_class ? `🥇 #${p.rank_in_class}` : '—';
+
+          // ===== OTA-ONALAR sahifasi =====
+          document.getElementById('parent-child-name').innerText = p.name;
+          document.getElementById('parent-child-meta').innerText = `${p.class} sinf · O'quvchi · ${p.level}-daraja`;
+          document.getElementById('parent-attendance-top').innerText = `${p.attendance}%`;
+          document.getElementById('parent-avg-top').innerText = p.avg_score;
+          document.getElementById('parent-streak-top').innerText = p.streak;
+          document.getElementById('parent-ring-attendance-label').innerText = `${p.attendance}%`;
+          document.getElementById('parent-ring-attendance').style.strokeDashoffset = `calc(251 - 251*${p.attendance/100})`;
+          
+          document.querySelector('.stat-card.cyan .stat-number').innerText = data.global_stats.active_users.toLocaleString();
+          document.querySelector('.stat-card.blue .stat-number').innerText = data.global_stats.today_xp.toLocaleString();
+          document.querySelector('.stat-card.green .stat-number').innerText = data.global_stats.tasks_done;
+          document.querySelector('.stat-card.gold .stat-number').innerText = data.global_stats.new_badges;
+
+          const lbBody = document.getElementById('leaderboard-body');
+          lbBody.innerHTML = '';
+          
+          data.leaderboard.forEach(student => {
+              const rankClass = student.rank === 1 ? 'rank-1' : student.rank === 2 ? 'rank-2' : student.rank === 3 ? 'rank-3' : 'rank-other';
+              const isMe = student.id === currentStudentId ? 'style="background: rgba(0,245,212,0.1); border-left: 3px solid var(--neon-cyan);"' : '';
+              
+              lbBody.innerHTML += `
+                  <tr ${isMe}>
+                      <td><span class="rank-badge ${rankClass}">${student.rank}</span></td>
+                      <td>
+                          <div class="student-name">${student.name} ${student.id === currentStudentId ? '(Siz)' : ''}</div>
+                      </td>
+                      <td><div class="student-class">${student.class}</div></td>
+                      <td><div class="xp-val">${student.xp} XP</div></td>
+                      <td>🔥 ${student.streak} kun</td>
+                      <td style="color: #39ff14">${student.change}</td>
+                  </tr>
+              `;
+          });
+
+          const classDiv = document.getElementById('class-ratings');
+          classDiv.innerHTML = '';
+          Object.keys(data.classes).forEach((className, index) => {
+              classDiv.innerHTML += `
+                  <div style="margin-bottom: 12px;">
+                      <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+                          <span>${index+1}. 🏫 ${className} sinf</span>
+                          <span style="color: var(--neon-cyan); font-weight:600;">${data.classes[className]} XP</span>
+                      </div>
+                      <div class="xp-bar-bg"><div class="xp-bar-fill" style="width: ${(data.classes[className]/2500)*100}%"></div></div>
+                  </div>
+              `;
+          });
+
+      } catch (error) {
+          console.error("Serverga ulanishda xatolik:", error);
+      }
+  }
+
+  // MENTORNI TANLASH (haqiqiy HTML ID'lariga moslashtirilgan)
+  function selectMentor(id) {
+      currentMentorId = id;
+      document.querySelectorAll('.mentor-card').forEach(c => c.classList.remove('selected'));
+      document.getElementById('mentor-' + id).classList.add('selected');
+
+      const m = mentorMeta[id];
+
+      document.getElementById('chat-name').textContent = m.name;
+      document.getElementById('chat-era').textContent = m.era;
+      const av = document.getElementById('chat-avatar');
+      av.textContent = m.avatar;
+      av.style.background = m.bg;
+      av.style.borderColor = m.border;
+
+      document.getElementById('chat-messages').innerHTML = `
+          <div class="msg-bubble mentor">
+              <div class="msg-name">${m.avatar} ${m.name}</div>
+              Assalomu alaykum, ilm izlovchi yosh do'stim! Bugun qanday ilm sirlarini o'rganamiz?
+              <div class="msg-meta">Hozir</div>
+          </div>
+      `;
+  }
+
+  // MENTORGA CHATDAN JONLI XABAR YUBORISH (haqiqiy HTML ID'lariga moslashtirilgan)
+  async function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if(!text) return;
+
+      const chatBox = document.getElementById('chat-messages');
+      const now = new Date().toLocaleTimeString('uz-UZ', {hour:'2-digit',minute:'2-digit'});
+
+      chatBox.innerHTML += `
+          <div class="msg-bubble user">
+              ${text}
+              <div class="msg-meta right">${now}</div>
+          </div>
+      `;
+      input.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      const typingId = 'typing-' + Date.now();
+      chatBox.innerHTML += `
+          <div class="typing-indicator" id="${typingId}">
+              <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+          </div>
+      `;
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      try {
+          const response = await fetch('http://127.0.0.1:8000/api/mentor/chat', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({
+                  student_id: currentStudentId,
+                  mentor_id: currentMentorId,
+                  message: text
+              })
+          });
+          const data = await response.json();
+
+          document.getElementById(typingId).remove();
+
+          const t2 = new Date().toLocaleTimeString('uz-UZ', {hour:'2-digit',minute:'2-digit'});
+          chatBox.innerHTML += `
+              <div class="msg-bubble mentor">
+                  <div class="msg-name">${mentorMeta[currentMentorId].avatar} ${data.mentor_name}</div>
+                  ${data.reply}
+                  <div class="msg-meta">✨ Ilm uchun: +${data.xp_earned} XP berildi! · ${t2}</div>
+              </div>
+          `;
+          chatBox.scrollTop = chatBox.scrollHeight;
+
+          loadDashboardData();
+
+      } catch (error) {
+          document.getElementById(typingId).remove();
+          chatBox.innerHTML += `
+              <div class="msg-bubble mentor">
+                  <div class="msg-name">⚠️ Tizim</div>
+                  Serverga ulanib bo'lmadi. main.py serveri ishlab turganini tekshiring (http://127.0.0.1:8000).
+              </div>
+          `;
+          console.error("Xabar yuborishda xatolik:", error);
+      }
+  }
+
+  window.onload = function() {
+      const ctx = document.getElementById('activityChart');
+      if (ctx) {
+          new Chart(ctx.getContext('2d'), {
+              type: 'line',
+              data: {
+                  labels: ['Dush', 'Sesh', 'Chor', 'Pay', 'Jum', 'Shan', 'Yak'],
+                  datasets: [{
+                      label: 'Haftalik XP',
+                      data: [1200, 2100, 1800, 3400, 4100, 2800, 4500],
+                      borderColor: '#00f5d4',
+                      backgroundColor: 'rgba(0,245,212,0.05)',
+                      borderWidth: 2,
+                      tension: 0.4
+                  }]
+              },
+              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+          });
+      }
+
+      // Avval saqlangan login bormi tekshiramiz
+      const savedToken = localStorage.getItem('ai_maktab_token');
+      const savedId = localStorage.getItem('ai_maktab_student_id');
+      if (savedToken && savedId) {
+          startApp(savedToken, savedId);
+      } else {
+          document.getElementById('auth-overlay').style.display = 'flex';
+      }
+  };
+</script>
+
+</body>
+</html>
