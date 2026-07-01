@@ -963,11 +963,11 @@
     </div>
 
     <div class="nav-label" style="margin-top:16px">SOZLAMALAR</div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="showPage('settings')">
       <span class="nav-icon">⚙️</span>
       <span>Sozlamalar</span>
     </div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="showPage('notifications')">
       <span class="nav-icon">🔔</span>
       <span>Bildirishnomalar</span>
       <span class="nav-badge">3</span>
@@ -1313,10 +1313,10 @@
         <div style="margin-top:16px;">
           <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">BUGUNGI KAYFIYAT</div>
           <div class="mood-row">
-            <div class="mood-pill active-mood">😊 Xursand</div>
-            <div class="mood-pill">🎯 Maqsadli</div>
-            <div class="mood-pill">💪 Faol</div>
-            <div class="mood-pill">📚 Sinchkov</div>
+            <div class="mood-pill active-mood" onclick="saveMood('Xursand')">😊 Xursand</div>
+            <div class="mood-pill" onclick="saveMood('Maqsadli')">🎯 Maqsadli</div>
+            <div class="mood-pill" onclick="saveMood('Faol')">💪 Faol</div>
+            <div class="mood-pill" onclick="saveMood('Sinchkov')">📚 Sinchkov</div>
           </div>
         </div>
       </div>
@@ -1338,6 +1338,72 @@
     </div>
   </div>
 
+  <!-- SOZLAMALAR SAHIFASI -->
+  <div id="page-settings" class="page">
+    <div class="page-header">
+      <h1 class="page-title">⚙️ <span>Sozlamalar</span></h1>
+      <p class="page-subtitle">Profilingizni tahrirlang va shaxsiy ma'lumotlaringizni yangilang</p>
+    </div>
+
+    <div style="max-width:560px;">
+      <div class="glass-card" style="margin-bottom:20px;">
+        <div class="card-title" style="margin-bottom:20px;">👤 SHAXSIY MA'LUMOTLAR</div>
+
+        <div id="settings-msg" style="display:none; padding:10px 14px; border-radius:8px; font-size:13px; margin-bottom:16px;"></div>
+
+        <div style="margin-bottom:14px;">
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">TO'LIQ ISM</div>
+          <input id="set-name" type="text" placeholder="To'liq ismingiz" style="width:100%; padding:11px 14px; background:var(--glass); border:1px solid var(--glass-border); border-radius:8px; color:var(--text-bright); font-family:'Exo 2'; font-size:14px;"/>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">SINF</div>
+          <input id="set-class" type="text" placeholder="Masalan: 10-A" style="width:100%; padding:11px 14px; background:var(--glass); border:1px solid var(--glass-border); border-radius:8px; color:var(--text-bright); font-family:'Exo 2'; font-size:14px;"/>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">MAKTAB</div>
+          <input id="set-school" type="text" placeholder="Maktab nomi" style="width:100%; padding:11px 14px; background:var(--glass); border:1px solid var(--glass-border); border-radius:8px; color:var(--text-bright); font-family:'Exo 2'; font-size:14px;"/>
+        </div>
+
+        <div class="card-title" style="margin:20px 0 16px;">🔒 PAROLNI O'ZGARTIRISH</div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">YANGI PAROL (bo'sh qoldiring — o'zgarmaydi)</div>
+          <input id="set-password" type="password" placeholder="Yangi parol" style="width:100%; padding:11px 14px; background:var(--glass); border:1px solid var(--glass-border); border-radius:8px; color:var(--text-bright); font-family:'Exo 2'; font-size:14px;"/>
+        </div>
+
+        <button onclick="saveSettings()" style="width:100%; padding:12px; background:var(--neon-cyan); color:#020818; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Exo 2'; font-size:14px; margin-top:8px;">💾 Saqlash</button>
+      </div>
+
+      <div class="glass-card">
+        <div class="card-title" style="margin-bottom:16px;">⚠️ AKKOUNT</div>
+        <button onclick="logout()" style="width:100%; padding:12px; background:rgba(255,60,60,0.1); border:1px solid rgba(255,60,60,0.3); color:#ff6868; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Exo 2'; font-size:14px;">⏻ Tizimdan chiqish</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BILDIRISHNOMALAR SAHIFASI -->
+  <div id="page-notifications" class="page">
+    <div class="page-header">
+      <h1 class="page-title">🔔 <span>Bildirishnomalar</span></h1>
+      <p class="page-subtitle">So'nggi yangiliklar va xabarlar</p>
+    </div>
+    <div class="glass-card" style="max-width:600px;">
+      <div style="display:flex; flex-direction:column; gap:12px;" id="notifications-list">
+        <div style="padding:14px; background:rgba(0,245,212,0.05); border-radius:10px; border-left:3px solid var(--neon-cyan);">
+          <div style="font-weight:600; color:var(--text-bright);">🏆 Yangi yutuq qo'lga kiritildi!</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Siz "Ilm Yulduzi" darajasiga erishdingiz · Bugun</div>
+        </div>
+        <div style="padding:14px; background:rgba(57,255,20,0.05); border-radius:10px; border-left:3px solid var(--neon-green);">
+          <div style="font-weight:600; color:var(--text-bright);">📚 AI Mentor bilan suhbat</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Alisher Navoiy bilan suhbat +20 XP berdi · Bugun</div>
+        </div>
+        <div style="padding:14px; background:rgba(255,215,0,0.05); border-radius:10px; border-left:3px solid var(--gold);">
+          <div style="font-weight:600; color:var(--text-bright);">🔥 Streak davom etyapti!</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Siz ketma-ket faol bo'lyapsiz · Kecha</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -1356,8 +1422,12 @@ function showPage(page) {
 
   // Init charts when page shown
   if (page === 'dashboard') initDashboardCharts();
-  if (page === 'parents') initParentCharts();
+  if (page === 'parents') initParentChartsReal();
   if (page === 'gamification') renderBadges();
+  if (page === 'settings') {
+    document.getElementById('settings-msg').style.display = 'none';
+    loadDashboardData(true);
+  }
 }
 
 // ============== DASHBOARD DATA ==============
@@ -1487,6 +1557,119 @@ const mentorMeta = [
   { name: "Al-Xorazmiy", era: "Matematikchi va olim · 780–850", avatar: "📜", bg: "linear-gradient(135deg,#2a1a0a,#1a0d00)", border: "var(--gold)" },
   { name: "Ibn Sino", era: "Tabib va faylasuf · 980–1037", avatar: "🩺", bg: "linear-gradient(135deg,#1a0a2a,#0d0020)", border: "#b44fff" }
 ];
+
+// ============== KAYFIYAT SAQLASH ==============
+async function saveMood(mood) {
+  document.querySelectorAll('.mood-pill').forEach(p => p.classList.remove('active-mood'));
+  event.target.classList.add('active-mood');
+  try {
+    await fetch('https://ai-maktabim.onrender.com/api/mood', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ student_id: currentStudentId, mood })
+    });
+  } catch(e) { console.log('Mood save error', e); }
+}
+
+// ============== SOZLAMALARNI SAQLASH ==============
+async function saveSettings() {
+  const name = document.getElementById('set-name').value.trim();
+  const cls = document.getElementById('set-class').value.trim();
+  const school = document.getElementById('set-school').value.trim();
+  const password = document.getElementById('set-password').value;
+  const msg = document.getElementById('settings-msg');
+
+  try {
+    const res = await fetch('https://ai-maktabim.onrender.com/api/settings', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ student_id: currentStudentId, full_name: name || null, student_class: cls || null, school_name: school || null, new_password: password || null })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      msg.style.display = 'block';
+      msg.style.background = 'rgba(57,255,20,0.08)';
+      msg.style.border = '1px solid rgba(57,255,20,0.3)';
+      msg.style.color = 'var(--neon-green)';
+      msg.textContent = '✅ Ma\'lumotlar muvaffaqiyatli saqlandi!';
+      document.querySelector('.user-name').innerText = data.name;
+      document.querySelector('.user-role').innerText = `${data.class} sinf · O'quvchi`;
+      document.getElementById('set-password').value = '';
+      loadDashboardData();
+    }
+  } catch(e) {
+    msg.style.display = 'block';
+    msg.style.background = 'rgba(255,60,60,0.08)';
+    msg.style.color = '#ff6868';
+    msg.textContent = '❌ Serverga ulanib bo\'lmadi';
+  }
+}
+
+// ============== SOZLAMALAR SAHIFASI OCHILGANDA MA'LUMOTLARNI TO'LDIRISH ==============
+function fillSettings(data) {
+  document.getElementById('set-name').value = data.personal.name || '';
+  document.getElementById('set-class').value = data.personal.class || '';
+  document.getElementById('set-school').value = data.personal.school || '';
+}
+
+// ============== REAL GRAFIKLAR ==============
+async function initParentChartsReal() {
+  // Haftalik XP grafigi
+  try {
+    const res = await fetch(`https://ai-maktabim.onrender.com/api/weekly-xp/${currentStudentId}`);
+    const data = await res.json();
+    const wCtx = document.getElementById('weeklyChart');
+    if (wCtx && !wCtx._chartInstance) {
+      wCtx._chartInstance = new Chart(wCtx, {
+        type: 'bar',
+        data: {
+          labels: data.days,
+          datasets: [{ label: 'XP ball', data: data.xp, backgroundColor: 'rgba(0,245,212,0.3)', borderColor: 'var(--neon-cyan)', borderWidth: 1, borderRadius: 6 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#7ec8cd' } }, y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#7ec8cd' } } } }
+      });
+    }
+  } catch(e) { console.log('Weekly XP error', e); }
+
+  // So'nggi faoliyat
+  try {
+    const res = await fetch(`https://ai-maktabim.onrender.com/api/activity/${currentStudentId}`);
+    const data = await res.json();
+    const tl = document.getElementById('activity-timeline');
+    if (data.activities.length === 0) {
+      tl.innerHTML = '<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:20px;">Hali hech qanday faoliyat yo\'q. AI Mentor bilan gaplashing!</div>';
+    } else {
+      tl.innerHTML = data.activities.map(a => `
+        <div class="timeline-item">
+          <div class="timeline-dot dot-cyan"></div>
+          <div>
+            <div class="timeline-text">${a.action} <span style="color:var(--neon-green);font-weight:600;">+${a.xp} XP</span></div>
+            <div class="timeline-time">${new Date(a.time).toLocaleString('uz-UZ')}</div>
+          </div>
+        </div>`).join('');
+    }
+  } catch(e) { console.log('Activity error', e); }
+
+  // Kayfiyat tarixi (radar chart)
+  try {
+    const res = await fetch(`https://ai-maktabim.onrender.com/api/mood/${currentStudentId}`);
+    const data = await res.json();
+    const moodMap = { 'Xursand': 0, 'Maqsadli': 0, 'Faol': 0, 'Sinchkov': 0 };
+    data.history.forEach(h => { if (moodMap[h.mood] !== undefined) moodMap[h.mood]++; });
+    const total = data.history.length || 1;
+    const moodCtx = document.getElementById('moodChart');
+    if (moodCtx && !moodCtx._chartInstance) {
+      moodCtx._chartInstance = new Chart(moodCtx, {
+        type: 'radar',
+        data: {
+          labels: ['Xursandlik', 'Maqsadlilik', 'Faollik', 'Sinchkovlik'],
+          datasets: [{ label: 'Kayfiyat', data: [Math.round(moodMap['Xursand']/total*100), Math.round(moodMap['Maqsadli']/total*100), Math.round(moodMap['Faol']/total*100), Math.round(moodMap['Sinchkov']/total*100)], borderColor: 'var(--neon-cyan)', backgroundColor: 'rgba(0,245,212,0.08)', borderWidth: 2, pointBackgroundColor: 'var(--neon-cyan)' }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { r: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { display: false }, pointLabels: { color: 'var(--text-muted)', font: { family: 'Exo 2', size: 11 } } } } }
+      });
+    }
+  } catch(e) { console.log('Mood chart error', e); }
+}
 
 // ============== GAMIFICATION ==============
 const badges = [
@@ -1649,7 +1832,7 @@ function initParentCharts() {
       if (!username || !password) { showAuthError("Username va parolni kiriting"); return; }
 
       try {
-          const res = await fetch('http://127.0.0.1:8000/api/login', {
+          const res = await fetch('https://ai-maktabim.onrender.com/api/login', {
               method: 'POST',
               headers: {'Content-Type': 'application/json'},
               body: JSON.stringify({ username, password })
@@ -1675,7 +1858,7 @@ function initParentCharts() {
       if (!full_name || !username || !password) { showAuthError("Ism, username va parolni to'ldiring"); return; }
 
       try {
-          const res = await fetch('http://127.0.0.1:8000/api/signup', {
+          const res = await fetch('https://ai-maktabim.onrender.com/api/signup', {
               method: 'POST',
               headers: {'Content-Type': 'application/json'},
               body: JSON.stringify({ username, full_name, password, student_class, school_name })
@@ -1733,13 +1916,15 @@ function initParentCharts() {
   }
 
   // 100% DINAMIK DASHBOARD YUKLASH (Python'dan ma'lumot olish)
-  async function loadDashboardData() {
+  async function loadDashboardData(forSettings = false) {
       try {
-          const response = await fetch(`http://127.0.0.1:8000/api/dashboard/${currentStudentId}`);
+          const response = await fetch(`https://ai-maktabim.onrender.com/api/dashboard/${currentStudentId}`);
           const data = await response.json();
           
           document.querySelector('.user-name').innerText = data.personal.name;
           document.querySelector('.user-role').innerText = `${data.personal.class} sinf · O'quvchi`;
+
+          if (forSettings) fillSettings(data);
 
           // ===== YUTUQLAR (gamification) sahifasi =====
           const p = data.personal;
@@ -1854,7 +2039,7 @@ function initParentCharts() {
       chatBox.scrollTop = chatBox.scrollHeight;
 
       try {
-          const response = await fetch('http://127.0.0.1:8000/api/mentor/chat', {
+          const response = await fetch('https://ai-maktabim.onrender.com/api/mentor/chat', {
               method: 'POST',
               headers: {'Content-Type': 'application/json'},
               body: JSON.stringify({
@@ -1884,7 +2069,7 @@ function initParentCharts() {
           chatBox.innerHTML += `
               <div class="msg-bubble mentor">
                   <div class="msg-name">⚠️ Tizim</div>
-                  Serverga ulanib bo'lmadi. main.py serveri ishlab turganini tekshiring (http://127.0.0.1:8000).
+                  Serverga ulanib bo'lmadi. main.py serveri ishlab turganini tekshiring (https://ai-maktabim.onrender.com).
               </div>
           `;
           console.error("Xabar yuborishda xatolik:", error);

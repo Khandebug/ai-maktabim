@@ -98,7 +98,33 @@ def init_db():
             ("jasur", hash_password("12345"), "Jasur Axmedov", "11-A", "2-maktab", 750, 4, "+10 bugun")
         ]
         cursor.executemany("INSERT INTO students (username, password_hash, name, student_class, school_name, xp_points, streak, today_change) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", test_students)
-        conn.commit()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS mood_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id INTEGER,
+            mood TEXT,
+            created_at TEXT DEFAULT (datetime('now'))
+        )
+    """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS activity_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id INTEGER,
+            action TEXT,
+            xp_earned INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT (datetime('now'))
+        )
+    """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS weekly_xp (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id INTEGER,
+            day_name TEXT,
+            xp INTEGER DEFAULT 0,
+            log_date TEXT DEFAULT (date('now'))
+        )
+    """)
+    conn.commit()
     conn.close()
 
 init_db()
@@ -116,6 +142,17 @@ class LoginRequest(BaseModel):
     password: str
 
 # --- MODEL (Ma'lumotlar formati) ---
+class MoodRequest(BaseModel):
+    student_id: int
+    mood: str
+
+class SettingsRequest(BaseModel):
+    student_id: int
+    full_name: str = None
+    student_class: str = None
+    school_name: str = None
+    new_password: str = None
+
 class MessageRequest(BaseModel):
     student_id: int
     mentor_id: int
@@ -235,6 +272,69 @@ def get_dashboard(student_id: int):
         }
     }
 
+@app.post("/api/mood")
+def save_mood(req: MoodRequest):
+    conn = sqlite3.connect("global_school.db")
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO mood_history (student_id, mood) VALUES (?, ?)", (req.student_id, req.mood))
+    conn.commit()
+    conn.close()
+    return {"ok": True}
+
+@app.get("/api/mood/{student_id}")
+def get_mood_history(student_id: int):
+    conn = sqlite3.connect("global_school.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT mood, created_at FROM mood_history WHERE student_id=? ORDER BY created_at DESC LIMIT 14", (student_id,))
+    rows = [{"mood": r[0], "date": r[1]} for r in cursor.fetchall()]
+    conn.close()
+    return {"history": rows}
+
+@app.get("/api/activity/{student_id}")
+def get_activity(student_id: int):
+    conn = sqlite3.connect("global_school.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT action, xp_earned, created_at FROM activity_log WHERE student_id=? ORDER BY created_at DESC LIMIT 10", (student_id,))
+    rows = [{"action": r[0], "xp": r[1], "time": r[2]} for r in cursor.fetchall()]
+    conn.close()
+    return {"activities": rows}
+
+@app.get("/api/weekly-xp/{student_id}")
+def get_weekly_xp(student_id: int):
+    conn = sqlite3.connect("global_school.db")
+    cursor = conn.cursor()
+    days = ['Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh', 'Ya']
+    cursor.execute("""
+        SELECT strftime('%w', created_at), SUM(xp_earned)
+        FROM activity_log
+        WHERE student_id=? AND created_at >= date('now', '-7 days')
+        GROUP BY strftime('%w', created_at)
+    """, (student_id,))
+    day_map = {r[0]: r[1] for r in cursor.fetchall()}
+    conn.close()
+    # 0=Yak, 1=Du, 2=Se, 3=Ch, 4=Pa, 5=Ju, 6=Sh
+    order = ['1','2','3','4','5','6','0']
+    xp_data = [day_map.get(d, 0) for d in order]
+    return {"days": days, "xp": xp_data}
+
+@app.post("/api/settings")
+def update_settings(req: SettingsRequest):
+    conn = sqlite3.connect("global_school.db")
+    cursor = conn.cursor()
+    if req.full_name:
+        cursor.execute("UPDATE students SET name=? WHERE id=?", (req.full_name, req.student_id))
+    if req.student_class:
+        cursor.execute("UPDATE students SET student_class=? WHERE id=?", (req.student_class, req.student_id))
+    if req.school_name:
+        cursor.execute("UPDATE students SET school_name=? WHERE id=?", (req.school_name, req.student_id))
+    if req.new_password:
+        cursor.execute("UPDATE students SET password_hash=? WHERE id=?", (hash_password(req.new_password), req.student_id))
+    conn.commit()
+    cursor.execute("SELECT name, student_class, school_name FROM students WHERE id=?", (req.student_id,))
+    row = cursor.fetchone()
+    conn.close()
+    return {"ok": True, "name": row[0], "class": row[1], "school": row[2]}
+
 @app.post("/api/mentor/chat")
 def mentor_chat(req: MessageRequest):
     profile = MENTOR_PROFILES.get(req.mentor_id, MENTOR_PROFILES[0])
@@ -265,6 +365,8 @@ def mentor_chat(req: MessageRequest):
     conn = sqlite3.connect("global_school.db")
     cursor = conn.cursor()
     cursor.execute("UPDATE students SET xp_points = xp_points + 20 WHERE id = ?", (req.student_id,))
+    cursor.execute("INSERT INTO activity_log (student_id, action, xp_earned) VALUES (?, ?, ?)",
+                   (req.student_id, f"🤖 {mentor_name} bilan suhbat", 20))
     conn.commit()
     conn.close()
 
@@ -272,4 +374,4 @@ def mentor_chat(req: MessageRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000)
